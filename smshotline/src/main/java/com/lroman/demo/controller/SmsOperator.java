@@ -1,9 +1,11 @@
 package com.lroman.demo.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,9 +15,14 @@ import com.twilio.twiml.MessagingResponse;
 import com.twilio.twiml.messaging.Body;
 import com.twilio.twiml.messaging.Message;
 
+import io.grpc.workerapi.Employee;
+
 @RestController
 public class SmsOperator {
 
+	@Autowired
+	DataBaseHandler handler;
+	
 	@RequestMapping(value="/postTextMessage",method=RequestMethod.POST)
 	public String postTextMessage(@RequestBody String postBody) {
 		// Get the user's information (User is the one sending text messages to our server)
@@ -54,6 +61,11 @@ public class SmsOperator {
 		String[] numberAndQuery = new String[2];
 		numberAndQuery[0] = number.get(1);
 		numberAndQuery[1] = textRequest.get(0);
+		
+		new Thread(()-> {
+			Employee employee = (Employee)handler.findWorker(numberAndQuery[0],numberAndQuery[1]);
+			handler.processWorkerRequest(employee);
+		}).start();
 		return numberAndQuery;
 	}
 }
