@@ -1,61 +1,50 @@
 package com.lroman.demo.model;
 
-import com.twilio.type.PhoneNumber;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-public class SmsSender {
-	
+
+@Configuration
+@ConfigurationProperties(prefix="twilio")
+public class TwilioConfig {
 	private String accountSid;
 	private String authToken;
-	private PhoneNumber twilioNumber;
-	
-	public SmsSender() {}
-
+	private String twilioNumber;
 	/**
 	 * @return the accountSid
 	 */
 	public String getAccountSid() {
 		return accountSid;
 	}
-
 	/**
 	 * @param accountSid the accountSid to set
 	 */
 	public void setAccountSid(String accountSid) {
 		this.accountSid = accountSid;
 	}
-
 	/**
 	 * @return the authToken
 	 */
 	public String getAuthToken() {
 		return authToken;
 	}
-
 	/**
 	 * @param authToken the authToken to set
 	 */
 	public void setAuthToken(String authToken) {
 		this.authToken = authToken;
 	}
-
 	/**
 	 * @return the twilioNumber
 	 */
-	public PhoneNumber getTwilioNumber() {
+	public String getTwilioNumber() {
 		return twilioNumber;
 	}
-
 	/**
 	 * @param twilioNumber the twilioNumber to set
 	 */
-	public void setTwilioNumber(PhoneNumber twilioNumber) {
+	public void setTwilioNumber(String twilioNumber) {
 		this.twilioNumber = twilioNumber;
-	}
-
-	@Override
-	public String toString() {
-		return "SmsSender [accountSid=" + accountSid + ", authToken=" + authToken + ", twilioNumber=" + twilioNumber
-				+ "]";
 	}
 	
 }
