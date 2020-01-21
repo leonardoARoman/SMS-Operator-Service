@@ -23,15 +23,20 @@ public class SmsOperator {
 	@Autowired
 	DataBaseHandler handler;
 	
+	/**
+	 * 
+	 * @param postBody
+	 * @return
+	 */
 	@RequestMapping(value="/postTextMessage",method=RequestMethod.POST)
 	public String postTextMessage(@RequestBody String postBody) {
-		// Get the user's information (User is the one sending text messages to our server)
-		String[] str = getTextQuery(postBody);
-		String message=str[1];
+		
+		String[] str = getTextQuery(postBody); // Get the user's information (User is the one sending text messages to our server)
 		String number=str[0];
-		// TODO: process the request (was a valid message? what is the mssg request? sick,late?
+		String request=str[1];
+		
 		Body body = new Body
-				.Builder("A "+message+" message has been processed for "+number+"\nThanks!")
+				.Builder("A "+request+" message has been processed for "+number+"\nThanks!")
 				.build();
 		Message mssg = new Message
 				.Builder()
@@ -44,11 +49,16 @@ public class SmsOperator {
 				.toXml();
 	}
 	
+	/**
+	 * 
+	 * @param postBody to process the request (was a valid message? what is the message request? sick,late?
+	 * @return phone number and text message requested
+	 */
 	private String[] getTextQuery(String postBody) {
 		String[] strings = postBody.split("=");
 		//Stream.of(strings).forEach(System.out::println);
 		ArrayList<String> number = Stream.of(strings)
-				.filter(str->str.startsWith("%2B")||str.startsWith("late")||str.startsWith("sick"))
+				.filter(str->str.startsWith("%2B"))
 				.map(str->str.substring(3, 14))
 				.collect(Collectors.toCollection(ArrayList::new));
 

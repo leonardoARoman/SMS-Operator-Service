@@ -44,8 +44,14 @@ public class DataBaseHandler implements SmsService{
 
 	@Override
 	public void processWorkerRequest(Object worker) {
+		System.out.println("processWorkerRequest was called!");
 		// TODO Auto-generated method stub
-		Employee employee = (Employee) worker;
+		Employee employee = Employee.newBuilder()
+				.setEName("Leonardo")
+				.setEId(1)
+				.setEShift(SHIFT.DAY)
+				.setEStatus(ABSENCE.SICK)
+				.build();
 		String str = "";
 		try {
 			str = InetAddress.getLocalHost().getHostAddress();
@@ -57,12 +63,13 @@ public class DataBaseHandler implements SmsService{
 						.forAddress(str, 8081)
 						.usePlaintext()
 						.build());
+		
 		newStub.processEmployeeRequest(new StreamObserver<Employee>() {
 
 			@Override
 			public void onNext(Employee arg0) {
 				// TODO Auto-generated method stub
-
+				System.out.println("a called back!");
 			}
 
 			@Override
