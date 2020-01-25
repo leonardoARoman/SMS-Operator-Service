@@ -1,9 +1,10 @@
 package com.lroman.demo.controller;
 
-import io.grpc.workerapi.CasinoNetworkServiceGrpc;
-import io.grpc.workerapi.Employee;
-import io.grpc.workerapi.Employee.ABSENCE;
-import io.grpc.workerapi.Employee.SHIFT;
+import io.grpc.casinoserviceapi.CasinoNetworkServiceGrpc;
+import io.grpc.casinoserviceapi.Employee;
+import io.grpc.casinoserviceapi.Employee.ABSENCE;
+import io.grpc.casinoserviceapi.Employee.SHIFT;
+import javafx.application.Platform;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -63,13 +64,15 @@ public class DataBaseHandler implements SmsService{
 						.forAddress(str, 8081)
 						.usePlaintext()
 						.build());
-		
+
 		newStub.processEmployeeRequest(new StreamObserver<Employee>() {
 
 			@Override
 			public void onNext(Employee arg0) {
 				// TODO Auto-generated method stub
-				System.out.println("a called back!");
+				Platform.runLater(()->{
+					System.out.println("a called back!");
+				});
 			}
 
 			@Override

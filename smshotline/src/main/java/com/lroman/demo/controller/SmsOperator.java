@@ -1,6 +1,5 @@
 package com.lroman.demo.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,7 +14,7 @@ import com.twilio.twiml.MessagingResponse;
 import com.twilio.twiml.messaging.Body;
 import com.twilio.twiml.messaging.Message;
 
-import io.grpc.workerapi.Employee;
+import io.grpc.casinoserviceapi.Employee;
 
 @RestController
 public class SmsOperator {
