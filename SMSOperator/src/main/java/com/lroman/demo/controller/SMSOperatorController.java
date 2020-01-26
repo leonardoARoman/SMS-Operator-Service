@@ -30,7 +30,7 @@ public class SMSOperatorController {
 		String smsRequest = parser.getSMSRequest(postBody);
 		
 		new Thread(()-> {
-			Employee employee = (Employee)parser.findEmployee(phoneNumber,smsRequest);
+			Employee employee = parser.findEmployee(phoneNumber,smsRequest);
 			parser.processWorkerRequest(employee);
 		}).start();
 		
