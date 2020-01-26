@@ -1,6 +1,9 @@
 package com.lroman.demo.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -8,14 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.lroman.demo.model.CasinoStreamingServiceConfig;
+import com.lroman.service.EmployeeDriver;
 
 import io.grpc.casinoserviceapi.Employee;
-import io.grpc.casinoserviceapi.Employee.ABSENCE;
-import io.grpc.casinoserviceapi.Employee.SHIFT;
+
 import io.grpc.stub.StreamObserver;
 
 @Component
-public class TwilioSMSParser implements DataBaseHandler {
+public class TwilioSMSParser implements  EmployeeDriver{
 
 	@Autowired
 	CasinoStreamingServiceConfig casinoConfig;
@@ -49,34 +52,27 @@ public class TwilioSMSParser implements DataBaseHandler {
 	}
 
 	@Override
-	public Employee findEmployee(String phoneNumber, String request) {
+	public Employee findReplacement(String arg0) {
 		// TODO Auto-generated method stub
-		// TODO connect to data base to find worker given a phone number
-		Employee newEmployee = null;
-		if(phoneNumber.equals("17323742773")) {
-			if(request.equals("sick")) {
-				newEmployee = Employee.newBuilder()
-						.setEName("Leonardo")
-						.setEId(1)
-						.setEShift(SHIFT.DAY)
-						.setEStatus(ABSENCE.SICK)
-						.build();
-			}else if(request.equals("late")){
-				newEmployee = Employee.newBuilder()
-						.setEName("Leonardo")
-						.setEId(1)
-						.setEShift(SHIFT.DAY)
-						.setEStatus(ABSENCE.LATE)
-						.build();
-			}else {
-				newEmployee = Employee.newBuilder().build();
-			}
-		}
-		return newEmployee;
+		return null;
 	}
 
 	@Override
-	public void processWorkerRequest(Employee worker) {
+	public Map<String,Integer> selectEmployee(String phoneNumber) {
+		// TODO SELECT NAME, ID FROM TABLEGAME WHERE PHONE==phoneNumber
+		Map<String,Integer> employee = new LinkedHashMap<>();
+		employee.put("Leonardo", 1);
+		return employee;
+	}
+
+	@Override
+	public String selectEmployeeID(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void sendWorkerRequest(Employee worker) {
 		// TODO Auto-generated method stub
 		System.out.println("Process for "+worker.getEName()+" successful");
 
@@ -100,5 +96,6 @@ public class TwilioSMSParser implements DataBaseHandler {
 
 			}
 		}).onNext(worker);
+
 	}
 }
