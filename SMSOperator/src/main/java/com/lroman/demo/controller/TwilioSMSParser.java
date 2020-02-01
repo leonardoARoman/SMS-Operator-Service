@@ -1,7 +1,6 @@
 package com.lroman.demo.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -76,7 +75,7 @@ public class TwilioSMSParser implements  EmployeeDriver{
 		// TODO Auto-generated method stub
 		System.out.println("Process for "+worker.getEName()+" successful");
 
-		casinoConfig.getNewStub().processEmployeeRequest(new StreamObserver<Employee>() {
+		casinoConfig.connectStub().processEmployeeRequest(new StreamObserver<Employee>() {
 
 			@Override
 			public void onNext(Employee arg0) {

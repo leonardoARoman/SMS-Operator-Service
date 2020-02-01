@@ -13,7 +13,7 @@ public class CasinoStreamingServiceConfig {
 	private String localHost;
 	private int port;
 
-	CasinoNetworkServiceGrpc.CasinoNetworkServiceStub newStub;
+	private CasinoNetworkServiceGrpc.CasinoNetworkServiceStub stub;
 
 	public CasinoStreamingServiceConfig() {}
 
@@ -46,23 +46,17 @@ public class CasinoStreamingServiceConfig {
 	}
 
 	/**
+	 * @brief connect the stub to the network if not connected
 	 * @return the newStub
 	 */
-	public CasinoNetworkServiceGrpc.CasinoNetworkServiceStub getNewStub() {
-		if(newStub == null) {
-			newStub = CasinoNetworkServiceGrpc
+	public CasinoNetworkServiceGrpc.CasinoNetworkServiceStub connectStub() {
+		if(stub == null) {
+			stub = CasinoNetworkServiceGrpc
 					.newStub(ManagedChannelBuilder
 							.forAddress(localHost, port)
 							.usePlaintext()
 							.build());
 		}
-		return newStub;
-	}
-
-	/**
-	 * @param newStub the newStub to set
-	 */
-	public void setNewStub(CasinoNetworkServiceGrpc.CasinoNetworkServiceStub newStub) {
-		this.newStub = newStub;
+		return stub;
 	}
 }
