@@ -63,15 +63,19 @@ public class SMSOperatorController {
 			newEmployee = Employee.newBuilder()
 					.setEName(key)
 					.setEId(value)
+					.setEPhone(phoneNumber)
 					.setEShift(SHIFT.DAY)
 					.setEStatus(ABSENCE.LATE)
+					.setRequest(key+" will be "+smsRequest)
 					.build();
 		}else if(smsRequest.equals("sick")) {
 			newEmployee = Employee.newBuilder()
 					.setEName(key)
 					.setEId(value)
+					.setEPhone(phoneNumber)
 					.setEShift(SHIFT.DAY)
 					.setEStatus(ABSENCE.SICK)
+					.setRequest(key+" will be "+smsRequest)
 					.build();
 		}else {
 			newEmployee = Employee.newBuilder().build();

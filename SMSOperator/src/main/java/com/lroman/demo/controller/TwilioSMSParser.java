@@ -9,19 +9,23 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.lroman.demo.model.CasinoStreamingServiceConfig;
+import com.lroman.demo.model.CasinoStreamingServiceInitializer;
+import com.lroman.demo.model.TwilioConfig;
 import com.lroman.service.EmployeeDriver;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 import io.grpc.casinoserviceapi.Employee;
-
 import io.grpc.stub.StreamObserver;
+
 
 @Component
 public class TwilioSMSParser implements  EmployeeDriver{
 
 	@Autowired
-	CasinoStreamingServiceConfig casinoConfig;
-
+	private CasinoStreamingServiceInitializer casinoStreamingService;
+	@Autowired
+	private TwilioConfig twilio;
 	/**
 	 * 
 	 * @param sms
@@ -75,11 +79,17 @@ public class TwilioSMSParser implements  EmployeeDriver{
 		// TODO Auto-generated method stub
 		System.out.println("Process for "+worker.getEName()+" successful");
 
-		casinoConfig.connectStub().processEmployeeRequest(new StreamObserver<Employee>() {
+		casinoStreamingService.getStub().processEmployeeRequest(new StreamObserver<Employee>() {
 
 			@Override
-			public void onNext(Employee arg0) {
-				// TODO Auto-generated method stub
+			public void onNext(Employee employee) {
+				System.out.println(employee.getRequest());
+				// Text employee's confirmation
+				Message.creator(
+						new PhoneNumber(worker.getEPhone()),
+						new PhoneNumber(twilio.getTwilioNumber()),
+						worker.getEName()+" your request has been processed thanks.\nConfirmation number 1234321" )
+				.create();
 
 			}
 
