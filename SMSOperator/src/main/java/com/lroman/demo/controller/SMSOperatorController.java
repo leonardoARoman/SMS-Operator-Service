@@ -20,7 +20,9 @@ import io.grpc.casinoserviceapi.Employee.SHIFT;
 public class SMSOperatorController {
 
 	@Autowired
-	TwilioSMSParser parser;
+	private TwilioSMSParser parser;
+	@Autowired
+	private DataBaseHelper query;
 
 	/**
 	 * 
@@ -29,14 +31,21 @@ public class SMSOperatorController {
 	 */
 	@RequestMapping(value="/postTextMessage",method=RequestMethod.POST)
 	public String postTextMessage(@RequestBody String postBody) {
-
+		// Parse the string and get phone number and request from employee
 		String phoneNumber = parser.getSenderNumber(postBody);
 		String smsRequest = parser.getSMSRequest(postBody);
-
-		new Thread(()-> sendRequest(phoneNumber,smsRequest)).start();
-
+		String confirmation = "A "+smsRequest+" message has been processed for "+phoneNumber+"\nThanks!";
+		// Process employee's request and do not block
+		Employee employee = getEmployee(phoneNumber,smsRequest);
+		// Check for valid request
+		if(employee.getEId()==0) {
+			confirmation = "Request not recognized, are you calling sick or late?";
+		}else {
+			new Thread(()->query.sendWorkerRequest(employee)).start();
+		}
+		// Send a received SMS confirmation
 		Body body = new Body
-				.Builder("A "+smsRequest+" message has been processed for "+phoneNumber+"\nThanks!")
+				.Builder(confirmation)
 				.build();
 		Message mssg = new Message
 				.Builder()
@@ -48,19 +57,26 @@ public class SMSOperatorController {
 				.build()
 				.toXml();
 	}
-	
-	private void sendRequest(String phoneNumber, String smsRequest) {
-		Map.Entry<String,Integer> entry = parser
+
+	/**
+	 * Find the employee who texted the SMS operator
+	 * @param phoneNumber
+	 * @param smsRequest
+	 * @return
+	 */
+	private Employee getEmployee(String phoneNumber, String smsRequest) {
+		// Find employee by phone number look up
+		Map.Entry<String,Integer> entry = query
 				.selectEmployee(phoneNumber)
 				.entrySet()
 				.iterator()
 				.next();
+		// Store name and ID
 		String key = entry.getKey();
 		int value = entry.getValue();
-		Employee newEmployee = null;
-
+		// Build and return an Employee data structured
 		if(smsRequest.equals("late")) {
-			newEmployee = Employee.newBuilder()
+			return  Employee.newBuilder()
 					.setEName(key)
 					.setEId(value)
 					.setEPhone(phoneNumber)
@@ -69,7 +85,7 @@ public class SMSOperatorController {
 					.setRequest(key+" will be "+smsRequest)
 					.build();
 		}else if(smsRequest.equals("sick")) {
-			newEmployee = Employee.newBuilder()
+			return Employee.newBuilder()
 					.setEName(key)
 					.setEId(value)
 					.setEPhone(phoneNumber)
@@ -77,9 +93,7 @@ public class SMSOperatorController {
 					.setEStatus(ABSENCE.SICK)
 					.setRequest(key+" will be "+smsRequest)
 					.build();
-		}else {
-			newEmployee = Employee.newBuilder().build();
 		}
-		parser.sendWorkerRequest(newEmployee);
+		return Employee.newBuilder().build();
 	}
 }
